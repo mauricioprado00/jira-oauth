@@ -1,0 +1,28 @@
+version: '2.2'
+
+services:
+
+  downloadapp:
+    image: alpine:latest
+    env_file: .env
+    volumes:
+      - ./config/setup/downloadapp/init/:/init
+      - ${GIT_PATH_REL}:${GIT_PATH}
+      - ${OPENSSL_PATH_REL}:${OPENSSL_PATH}
+    command: /bin/sh /init/startup.sh
+  composer:
+    image: composer
+    env_file: .env
+    volumes:
+      - ./config/setup/composer/init/:/init
+      - ${GIT_PATH_REL}:${GIT_PATH}
+    command: /bin/sh /init/startup.sh
+  oauthserver:
+    image: php:apache
+    env_file: .env
+    ports:
+      - "5800:80"
+    volumes:
+      - ${DIR_PHP_EXAMPLE_REL}:/var/www/
+      - ${DIR_PHP_EXAMPLE_REL}/web:/var/www/html/
+      - ${OPENSSL_PATH_REL}:/Users/stan/Sites/ssl
